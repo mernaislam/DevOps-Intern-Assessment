@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: todo
+  template:
+    metadata:
+      labels:
+        app: todo
+    spec:
+      imagePullSecrets:
+        - name: regcred
+      containers:
+        - name: todo
+          image: mernaislam2/todo-list-nodejs:latest
+          ports:
+            - containerPort: 4000
+          env:
+            - name: mongoDbUrl
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: mongoDbUrl
+

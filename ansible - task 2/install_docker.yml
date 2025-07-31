@@ -1,0 +1,30 @@
+---
+- name: Install Docker and Docker Compose on AWS VM (Amazon Linux 2)
+  hosts: aws_vm
+  become: yes
+  tasks:
+    - name: Install Docker
+      yum:
+        name: docker
+        state: present
+
+    - name: Start and enable Docker
+      systemd:
+        name: docker
+        enabled: yes
+        state: started
+
+    - name: Install Docker Compose
+      get_url:
+        url: "https://github.com/docker/compose/releases/latest/download/docker-compose-{{ ansible_system | lower }}-{{ ansible_architecture }}"
+        dest: /usr/local/bin/docker-compose
+        mode: '0755'
+
+    - name: Verify Docker Compose installation
+      command: docker-compose --version
+      register: docker_compose_result
+      changed_when: false
+
+    - name: Show Docker Compose version
+      debug:
+        msg: "Docker Compose installed: {{ docker_compose_result.stdout }}"
