@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  web:
+    image: mernaislam2/todo-list-nodejs:latest
+    container_name: todo-app
+    env_file:
+      - .env
+    ports:
+      - "3000:4000"
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+  watchtower:
+    image: containrrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --interval 30 --cleanup
